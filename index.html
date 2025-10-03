@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Java Strings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: A two-column layout with a fixed sidebar for navigation and a dynamic main content area. This structure, common for documentation sites, was chosen to break down the dense report into manageable, user-selectable sections. It allows for quick referencing and non-linear exploration, which is more effective for learning and review than a single, long-scrolling document. The main navigation corresponds to the report's top-level sections, with interactive elements like accordions and a search filter within the "Methods" section to manage complexity and improve usability. -->
+    <!-- Visualization & Content Choices: The report is text- and code-heavy, so the focus is on clear typography, layout, and interactive content organization rather than data visualization. Report Info -> Goal -> Presentation Method -> Interaction -> Justification. 1. Method List -> Organize/Inform -> Accordion Cards -> Click to expand/collapse -> Prevents overwhelming the user with information. 2. Method Search -> Find -> Search Bar Filter -> Type to filter -> Provides rapid access to specific method details. 3. Code Examples -> Inform/Teach -> Styled Code Blocks -> Click to copy -> Improves utility for developers. 4. Concepts (Immutability, == vs .equals) -> Explain -> Side-by-side cards/comparison tables -> None needed -> Direct comparison enhances understanding of nuanced topics. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .sidebar-link.active {
+            background-color: #ccfbf1;
+            color: #0f766e;
+            font-weight: 600;
+        }
+         .method-card:target {
+            background-color: #f0fdfa;
+            border-left-color: #14b8a6;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800">
+
+    <div class="flex min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside class="w-1/4 min-w-[250px] bg-white border-r border-stone-200 p-6 fixed h-full overflow-y-auto hidden md:block">
+            <h1 class="text-xl font-bold text-teal-700 mb-6">Java Strings Guide</h1>
+            <nav id="sidebar-nav" class="space-y-2">
+                <a href="#introduction" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">1. Introduction</a>
+                <a href="#methods" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">2. String Methods</a>
+                <a href="#cheatsheet" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">3. Cheatsheet</a>
+                <a href="#builders" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">4. StringBuilder & StringBuffer</a>
+                <a href="#comparison" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">5. `==` vs `.equals()`</a>
+                <a href="#problems" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">6. Practice Problems</a>
+                <a href="#summary" class="sidebar-link block px-4 py-2 rounded-md text-slate-600 hover:bg-stone-100 transition-colors">7. Important Points</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full md:ml-[25%] p-6 md:p-10">
+            <header class="md:hidden mb-6">
+                 <h1 class="text-2xl font-bold text-teal-700">Java Strings Guide</h1>
+                 <select id="mobile-nav" class="w-full mt-4 p-2 border rounded-md bg-white">
+                    <option value="introduction">1. Introduction</option>
+                    <option value="methods">2. String Methods</option>
+                    <option value="cheatsheet">3. Cheatsheet</option>
+                    <option value="builders">4. StringBuilder & StringBuffer</option>
+                    <option value="comparison">5. == vs .equals()</option>
+                    <option value="problems">6. Practice Problems</option>
+                    <option value="summary">7. Important Points</option>
+                 </select>
+            </header>
+
+            <div id="content-container">
+                <!-- Section 1: Introduction -->
+                <section id="introduction" class="content-section space-y-8">
+                    <h2 class="text-3xl font-bold border-b pb-2">Introduction to Strings</h2>
+                    <p class="text-lg text-slate-600">This section covers the fundamental concepts of Java Strings, including their definition, immutability, and how they are managed in memory. Understanding these core ideas is essential before diving into the specific methods and applications.</p>
+                    
+                    <article class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">What are Strings in Java?</h3>
+                        <p>In Java, a `String` is an object that represents a sequence of characters. The `java.lang.String` class is used to create and manipulate strings. Unlike character arrays, Strings are objects and come with a rich set of built-in methods for manipulation.</p>
+                    </article>
+
+                    <article class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">String as Immutable Objects</h3>
+                        <p class="mb-4">A crucial characteristic of Java Strings is their <strong class="text-teal-600">immutability</strong>. Once a `String` object is created, its value (the sequence of characters) cannot be changed. Any method that appears to modify a string, such as `concat()`, `substring()`, or `replace()`, does not alter the original string. Instead, it creates and returns a **new** `String` object containing the modified sequence.</p>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            <div class="bg-teal-50 p-4 rounded"><strong>Security:</strong> Immutability prevents malicious code from changing string values used in connections, URLs, or file paths.</div>
+                            <div class="bg-teal-50 p-4 rounded"><strong>Thread Safety:</strong> Strings are inherently thread-safe because their state cannot change, allowing safe sharing between threads.</div>
+                            <div class="bg-teal-50 p-4 rounded"><strong>Performance:</strong> Immutability enables the String Pool for caching, saving memory, and allows for caching hashcodes for faster use in collections like `HashMap`.</div>
+                        </div>
+                    </article>
+
+                    <article class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">String Pool and Memory Management</h3>
+                        <p>Java uses a special memory area called the <strong class="text-teal-600">String Constant Pool</strong> (in the Heap) to manage strings created by literals. When you create a string like `String s = "Hello";`, the JVM checks the pool. If "Hello" exists, it returns a reference to the existing object; otherwise, it creates a new one in the pool. This ensures only one copy of a distinct string literal exists, saving memory.</p>
+                    </article>
+                    
+                    <article class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">Ways to Create Strings</h3>
+                         <div class="grid md:grid-cols-2 gap-6 mt-4">
+                            <div>
+                                <h4 class="font-semibold">1. By String Literal</h4>
+                                <p class="text-sm text-slate-600 mb-2">Creates the string in the String Constant Pool. References are shared for identical literals.</p>
+                                <div class="code-block">String s1 = "Java";
+String s2 = "Java";
+// s1 == s2 is true</div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">2. By `new` Keyword</h4>
+                                <p class="text-sm text-slate-600 mb-2">Forces creation of a new object in Heap memory, outside the pool.</p>
+                                <div class="code-block">String s3 = new String("Java");
+String s4 = new String("Java");
+// s3 == s4 is false</div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Section 2: String Methods -->
+                <section id="methods" class="content-section space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">String Class Methods</h2>
+                     <p class="text-lg text-slate-600">The `String` class provides a rich collection of methods for various operations. This section is an interactive explorer for these methods. Use the search bar to filter, or click on a method to see its details and examples. Remember, due to immutability, all modification methods return a new string.</p>
+                    <input type="text" id="method-search" placeholder="🔍 Search for a method (e.g., substring)..." class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 outline-none">
+                    
+                    <div id="method-list" class="space-y-4">
+                        <!-- Method cards will be injected here by JavaScript -->
+                    </div>
+                </section>
+                
+                <!-- Section 3: Cheatsheet -->
+                <section id="cheatsheet" class="content-section space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">String Methods Cheatsheet</h2>
+                    <p class="text-lg text-slate-600">A quick reference guide for the most commonly used `String` class methods. Use this to refresh your memory on syntax and functionality.</p>
+                    <div id="cheatsheet-container" class="space-y-6">
+                        <!-- Cheatsheet tables injected here -->
+                    </div>
+                </section>
+
+                <!-- Section 4: StringBuilder & StringBuffer -->
+                <section id="builders" class="content-section space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">StringBuilder & StringBuffer</h2>
+                    <p class="text-lg text-slate-600">Because `String` objects are immutable, performing many modifications can be inefficient. For scenarios requiring frequent changes, Java provides two mutable alternatives: `StringBuilder` and `StringBuffer`. They offer similar APIs for modifying a sequence of characters in place, which is significantly more performant.</p>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <article class="p-6 bg-white rounded-lg shadow-sm">
+                            <h3 class="text-xl font-semibold mb-2">StringBuilder</h3>
+                            <p class="mb-4">Represents a mutable sequence of characters. It is the recommended choice for <strong class="text-teal-600">single-threaded</strong> applications due to its superior performance, as its methods are not synchronized.</p>
+                            <h4 class="font-semibold mt-4 mb-2">Common Methods Example:</h4>
+                            <div class="code-block">StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World");      // Appends
+sb.insert(5, ", Java");   // Inserts
+sb.delete(5, 11);         // Deletes
+sb.reverse();             // Reverses
+System.out.println(sb);   // Output: dlroW olleH</div>
+                        </article>
+                        <article class="p-6 bg-white rounded-lg shadow-sm">
+                            <h3 class="text-xl font-semibold mb-2">StringBuffer</h3>
+                            <p class="mb-4">Nearly identical to `StringBuilder`, but its methods are synchronized, making it <strong class="text-teal-600">thread-safe</strong>. This synchronization adds overhead, making it slower. It should only be used when a mutable string needs to be safely modified by multiple threads.</p>
+                            <h4 class="font-semibold mt-4 mb-2">Key Differences:</h4>
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-stone-100">
+                                        <th class="p-2 border">Feature</th>
+                                        <th class="p-2 border">StringBuilder</th>
+                                        <th class="p-2 border">StringBuffer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="p-2 border">Thread Safety</td><td class="p-2 border">Not Safe</td><td class="p-2 border">Safe</td></tr>
+                                    <tr><td class="p-2 border">Performance</td><td class="p-2 border">Faster</td><td class="p-2 border">Slower</td></tr>
+                                </tbody>
+                            </table>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- Section 5: == vs .equals() -->
+                <section id="comparison" class="content-section space-y-8 hidden">
+                     <h2 class="text-3xl font-bold border-b pb-2">`==` vs `.equals()`</h2>
+                     <p class="text-lg text-slate-600">A frequent point of confusion for Java beginners is the difference between the `==` operator and the `.equals()` method for comparing strings. Understanding this distinction is crucial for writing correct and bug-free code. One compares object references, while the other compares content.</p>
+
+                     <div class="grid md:grid-cols-2 gap-8 items-start">
+                         <article class="p-6 bg-white rounded-lg shadow-sm">
+                            <h3 class="text-xl font-semibold mb-2">`==` Operator (Reference Comparison)</h3>
+                            <p>This operator checks if two variables point to the <strong class="text-teal-600">exact same object in memory</strong>. It does not look at the content of the strings.</p>
+                         </article>
+                          <article class="p-6 bg-white rounded-lg shadow-sm">
+                            <h3 class="text-xl font-semibold mb-2">`.equals()` Method (Content Comparison)</h3>
+                            <p>This method, when used with strings, checks if the <strong class="text-teal-600">sequence of characters</strong> in two string objects is identical. This is the correct way to check if two strings have the same value.</p>
+                         </article>
+                     </div>
+                     <article class="p-6 bg-white rounded-lg shadow-sm">
+                         <h3 class="text-xl font-semibold mb-2">Detailed Example</h3>
+                         <p class="text-slate-600 mb-4">The following code demonstrates the difference in various scenarios. Notice how string literals point to the same object in the String Pool, whereas `new String()` always creates a new object on the Heap.</p>
+                         <div class="code-block" id="comparison-example"></div>
+                     </article>
+                </section>
+
+                <!-- Section 6: Practice Problems -->
+                <section id="problems" class="content-section space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">Java String Practice Problems</h2>
+                     <p class="text-lg text-slate-600">Test your knowledge with a comprehensive set of practice problems ranging from basic to expert level. Click on any problem to reveal its solution. This is the best way to solidify your understanding of String manipulation.</p>
+                     <div id="problem-container" class="space-y-6">
+                         <!-- Problems injected here -->
+                     </div>
+                </section>
+
+                <!-- Section 7: Important Points -->
+                <section id="summary" class="content-section space-y-8 hidden">
+                    <h2 class="text-3xl font-bold border-b pb-2">Important Points to Remember</h2>
+                    <p class="text-lg text-slate-600">Here are the key takeaways and common pitfalls to avoid when working with Java Strings. Keeping these points in mind will help you write more efficient, predictable, and bug-free code.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <article class="p-6 bg-white rounded-lg shadow-sm border-l-4 border-teal-500">
+                           <h3 class="text-xl font-semibold mb-2">1. Immutability is Key</h3>
+                           <p>Any operation that seems to modify a string (`.trim()`, `.concat()`, `.replace()`, etc.) actually creates and returns a new string. The original remains unchanged. You must assign the result to a variable.</p>
+                        </article>
+                        <article class="p-6 bg-white rounded-lg shadow-sm border-l-4 border-teal-500">
+                           <h3 class="text-xl font-semibold mb-2">2. Performance Matters</h3>
+                           <p>Avoid concatenating strings in a loop using the `+` operator. This is highly inefficient as it creates many intermediate objects. Use `StringBuilder` for such tasks.</p>
+                        </article>
+                        <article class="p-6 bg-white rounded-lg shadow-sm border-l-4 border-red-500">
+                           <h3 class="text-xl font-semibold mb-2">3. Pitfall: `==` for Content</h3>
+                           <p>Never use `==` to compare string values. It checks for object identity, not content equality. <strong class="text-red-600">Always use `.equals()`</strong> for comparing the content of two strings.</p>
+                        </article>
+                        <article class="p-6 bg-white rounded-lg shadow-sm border-l-4 border-red-500">
+                           <h3 class="text-xl font-semibold mb-2">4. Pitfall: Ignoring Return Values</h3>
+                           <p>Forgetting to assign the result of a modification method is a common error. `myStr.trim();` does nothing to `myStr`. You must use `myStr = myStr.trim();`.</p>
+                        </article>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('#sidebar-nav a');
+    const mobileNav = document.getElementById('mobile-nav');
+
+    const methodData = [
+        { category: 'String Creation & Conversion', methods: [
+            { name: 'String()', syntax: 'String(char[] value), etc.', description: 'Constructs a new String object. Using the constructor always creates a new object in the heap.', example: `char[] chars = {'h', 'e', 'l', 'l', 'o'};\nString strFromChars = new String(chars);\n\nSystem.out.println(strFromChars); // Output: hello`},
+            { name: 'valueOf()', syntax: 'static String valueOf(data_type value)', description: 'A static method that converts its argument into a string.', example: `int number = 123;\nString strNum = String.valueOf(number);\n\nSystem.out.println(strNum); // Output: 123`},
+            { name: 'copyValueOf()', syntax: 'static String copyValueOf(char[] data)', description: 'A static factory method that creates a new String from a character array.', example: `char[] data = {'J', 'a', 'v', 'a'};\nString copy = String.copyValueOf(data);\n\nSystem.out.println(copy); // Output: Java`}
+        ]},
+        { category: 'Character Extraction', methods: [
+            { name: 'charAt()', syntax: 'char charAt(int index)', description: 'Fetches the character at a specific position. Throws StringIndexOutOfBoundsException if the index is invalid.', example: `String str = "Example";\nchar c = str.charAt(0);\n\nSystem.out.println(c); // Output: E`},
+            { name: 'toCharArray()', syntax: 'char[] toCharArray()', description: 'Converts this string to a new character array.', example: `String str = "Java";\nchar[] chars = str.toCharArray();\n\nSystem.out.println(chars.length); // Output: 4`},
+            { name: 'getChars()', syntax: 'void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)', description: 'Copies characters from this string into a destination character array.', example: `String str = "Hello Java";\nchar[] destArray = new char[4];\nstr.getChars(6, 10, destArray, 0);\n\nSystem.out.println(new String(destArray)); // Output: Java`}
+        ]},
+        { category: 'Comparison', methods: [
+            { name: 'equals()', syntax: 'boolean equals(Object anObject)', description: 'Compares the character sequence of two strings. It is case-sensitive.', example: `String s1 = "hello";\nString s2 = "HELLO";\n\nSystem.out.println(s1.equals(s2)); // Output: false`},
+            { name: 'equalsIgnoreCase()', syntax: 'boolean equalsIgnoreCase(String anotherString)', description: 'Compares two strings lexicographically, ignoring case differences.', example: `String s1 = "hello";\nString s2 = "HELLO";\n\nSystem.out.println(s1.equalsIgnoreCase(s2)); // Output: true`},
+            { name: 'compareTo()', syntax: 'int compareTo(String anotherString)', description: 'Compares two strings based on the Unicode value of each character. It is case-sensitive. Returns 0 if equal, <0 if this string is less, >0 if greater.', example: `String s1 = "apple";\nString s2 = "banana";\n\nSystem.out.println(s1.compareTo(s2)); // Output is negative`},
+            { name: 'contentEquals()', syntax: 'boolean contentEquals(CharSequence cs)', description: 'Compares this string to a CharSequence (like StringBuilder).', example: `String str = "Hello";\nStringBuilder sb = new StringBuilder("Hello");\n\nSystem.out.println(str.contentEquals(sb)); // Output: true`}
+        ]},
+        { category: 'Searching', methods: [
+            { name: 'indexOf()', syntax: 'int indexOf(String str)', description: 'Returns the index of the first occurrence of a substring, or -1 if not found.', example: `String text = "Java is fun";\n\nSystem.out.println(text.indexOf("is")); // Output: 5`},
+            { name: 'lastIndexOf()', syntax: 'int lastIndexOf(String str)', description: 'Returns the index of the last occurrence of a substring, or -1 if not found.', example: `String text = "Java Java Java";\n\nSystem.out.println(text.lastIndexOf("Java")); // Output: 10`},
+            { name: 'contains()', syntax: 'boolean contains(CharSequence s)', description: 'Returns true if the string contains the specified character sequence.', example: `String text = "Hello World";\n\nSystem.out.println(text.contains("World")); // Output: true`},
+            { name: 'startsWith()', syntax: 'boolean startsWith(String prefix)', description: 'Checks if a string begins with a specific substring.', example: `String filename = "photo.jpg";\n\nSystem.out.println(filename.startsWith("photo")); // Output: true`},
+            { name: 'endsWith()', syntax: 'boolean endsWith(String suffix)', description: 'Checks if a string ends with a specific substring.', example: `String filename = "photo.jpg";\n\nSystem.out.println(filename.endsWith(".jpg")); // Output: true`}
+        ]},
+        { category: 'Modification (Return New String)', methods: [
+            { name: 'concat()', syntax: 'String concat(String str)', description: 'Appends a string to the end of another string.', example: `String s1 = "Hello";\nString result = s1.concat(" World");\n\nSystem.out.println(result); // Output: Hello World`},
+            { name: 'replace()', syntax: 'String replace(char oldChar, char newChar)', description: 'Replaces every occurrence of a target character or sequence.', example: `String text = "The quick brown fox";\nString newText = text.replace("fox", "cat");\n\nSystem.out.println(newText); // Output: The quick brown cat`},
+            { name: 'replaceAll()', syntax: 'String replaceAll(String regex, String replacement)', description: 'Replaces all substrings that match a given regular expression.', example: `String text = "Call 123-456";\nString newText = text.replaceAll("\\\\d", "*");\n\nSystem.out.println(newText); // Output: Call ***-***`},
+            { name: 'substring()', syntax: 'String substring(int beginIndex, int endIndex)', description: 'Extracts a portion of the string.', example: `String text = "Welcome to Java";\nString sub = text.substring(8, 10);\n\nSystem.out.println(sub); // Output: to`},
+            { name: 'toLowerCase()', syntax: 'String toLowerCase()', description: 'Changes the case of all characters to lowercase.', example: `String text = "JAVA";\n\nSystem.out.println(text.toLowerCase()); // Output: java`},
+            { name: 'toUpperCase()', syntax: 'String toUpperCase()', description: 'Changes the case of all characters to uppercase.', example: `String text = "java";\n\nSystem.out.println(text.toUpperCase()); // Output: JAVA`},
+            { name: 'trim()', syntax: 'String trim()', description: 'Removes leading and trailing whitespace.', example: `String text = "  Hello  ";\n\nSystem.out.println("'" + text.trim() + "'"); // Output: 'Hello'`},
+            { name: 'strip()', syntax: 'String strip()', description: '(Java 11+) Removes leading and trailing whitespace (Unicode-aware).', example: `String text = "  Hello  ";\n\nSystem.out.println("'" + text.strip() + "'"); // Output: 'Hello'`}
+        ]},
+        { category: 'Splitting & Joining', methods: [
+            { name: 'split()', syntax: 'String[] split(String regex)', description: 'Splits the string around matches of the given regular expression.', example: `String text = "apple,banana,orange";\nString[] fruits = text.split(",");\n\nSystem.out.println(fruits.length); // Output: 3`},
+            { name: 'join()', syntax: 'static String join(CharSequence delimiter, ...)', description: 'A static method for joining a sequence of strings with a delimiter.', example: `String[] words = {"Java", "is", "cool"};\nString sentence = String.join(" ", words);\n\nSystem.out.println(sentence); // Java is cool`}
+        ]},
+        { category: 'Checking', methods: [
+            { name: 'isEmpty()', syntax: 'boolean isEmpty()', description: 'Returns true if length() is 0.', example: `String s1 = "";\nString s2 = " ";\n\nSystem.out.println(s1.isEmpty()); // true\nSystem.out.println(s2.isEmpty()); // false`},
+            { name: 'isBlank()', syntax: 'boolean isBlank()', description: '(Java 11+) Returns true if the string is empty or contains only whitespace.', example: `String s1 = "";\nString s2 = "   ";\n\nSystem.out.println(s1.isBlank()); // true\nSystem.out.println(s2.isBlank()); // true`},
+            { name: 'matches()', syntax: 'boolean matches(String regex)', description: 'Checks if the entire string conforms to a regular expression pattern.', example: `String zip = "12345";\n\nSystem.out.println(zip.matches("\\\\d{5}")); // true`}
+        ]},
+        { category: 'Other Utilities', methods: [
+            { name: 'length()', syntax: 'int length()', description: 'Returns the number of characters in the string.', example: `String s = "Hello";\n\nSystem.out.println(s.length()); // 5`},
+            { name: 'intern()', syntax: 'String intern()', description: 'Returns a canonical string from the String Constant Pool.', example: `String s1 = new String("pool");\nString s2 = s1.intern();\nString s3 = "pool";\n\nSystem.out.println(s2 == s3); // true`},
+            { name: 'repeat()', syntax: 'String repeat(int count)', description: '(Java 11+) Repeats the string content `count` times.', example: `String s = "Ha";\n\nSystem.out.println(s.repeat(3)); // HaHaHa`},
+            { name: 'formatted()', syntax: 'String formatted(Object... args)', description: '(Java 15+) An instance method equivalent to the static String.format().', example: `String t = "Hi %s!";\n\nSystem.out.println(t.formatted("Java")); // Hi Java!`}
+        ]},
+    ];
+    
+    const cheatSheetData = [
+        { category: 'Comparison', methods: [
+            { name: 'equals(obj)', syntax: 'boolean equals(Object obj)', description: 'Checks if content is identical (case-sensitive).' },
+            { name: 'equalsIgnoreCase(str)', syntax: 'boolean equalsIgnoreCase(String str)', description: 'Checks if content is identical (case-insensitive).' },
+            { name: 'compareTo(str)', syntax: 'int compareTo(String str)', description: 'Lexicographically compares strings (case-sensitive).' },
+            { name: 'compareToIgnoreCase(str)', syntax: 'int compareToIgnoreCase(String str)', description: 'Lexicographically compares strings (case-insensitive).' }
+        ]},
+        { category: 'Searching', methods: [
+            { name: 'indexOf(char/String)', syntax: 'int indexOf(...)', description: 'Finds index of the first occurrence.' },
+            { name: 'lastIndexOf(char/String)', syntax: 'int lastIndexOf(...)', description: 'Finds index of the last occurrence.' },
+            { name: 'contains(seq)', syntax: 'boolean contains(CharSequence seq)', description: 'Checks for presence of a substring.' },
+            { name: 'startsWith(prefix)', syntax: 'boolean startsWith(String prefix)', description: 'Checks if string begins with prefix.' },
+            { name: 'endsWith(suffix)', syntax: 'boolean endsWith(String suffix)', description: 'Checks if string ends with suffix.' }
+        ]},
+        { category: 'Modification (Returns New String)', methods: [
+            { name: 'concat(str)', syntax: 'String concat(String str)', description: 'Appends a string.' },
+            { name: 'replace(old, new)', syntax: 'String replace(...)', description: 'Replaces all occurrences of a char or sequence.' },
+            { name: 'replaceAll(regex, str)', syntax: 'String replaceAll(String regex, String str)', description: 'Replaces all regex matches.' },
+            { name: 'replaceFirst(regex, str)', syntax: 'String replaceFirst(String regex, String str)', description: 'Replaces the first regex match.' },
+            { name: 'substring(begin, end?)', syntax: 'String substring(...)', description: 'Extracts a portion of the string.' },
+            { name: 'toLowerCase()', syntax: 'String toLowerCase()', description: 'Converts to all lowercase.' },
+            { name: 'toUpperCase()', syntax: 'String toUpperCase()', description: 'Converts to all uppercase.' },
+            { name: 'trim()', syntax: 'String trim()', description: 'Removes leading/trailing whitespace.' },
+            { name: 'strip()', syntax: 'String strip()', description: 'Unicode-aware version of trim() (Java 11+).' }
+        ]},
+        { category: 'Checking & Info', methods: [
+            { name: 'length()', syntax: 'int length()', description: 'Returns the number of characters.' },
+            { name: 'isEmpty()', syntax: 'boolean isEmpty()', description: 'True if length is 0.' },
+            { name: 'isBlank()', syntax: 'boolean isBlank()', description: 'True if empty or only whitespace (Java 11+).' },
+            { name: 'matches(regex)', syntax: 'boolean matches(String regex)', description: 'Checks if the entire string matches a regex.' }
+        ]},
+        { category: 'Splitting & Joining', methods: [
+            { name: 'split(regex, limit?)', syntax: 'String[] split(...)', description: 'Splits string into an array by a delimiter.' },
+            { name: 'String.join(del, elems)', syntax: 'static String join(...)', description: 'Joins elements with a delimiter.' }
+        ]},
+        { category: 'Conversion & Extraction', methods: [
+            { name: 'toCharArray()', syntax: 'char[] toCharArray()', description: 'Converts string to a character array.' },
+            { name: 'charAt(index)', syntax: 'char charAt(int index)', description: 'Returns the character at an index.' },
+            { name: 'String.valueOf(val)', syntax: 'static String valueOf(...)', description: 'Converts primitives or objects to a string.' }
+        ]}
+    ];
+
+    const problemData = [
+        { level: 'BASIC LEVEL (Beginner)', problems: [
+            { id: 1, title: 'Create and compare strings with == and .equals()', solution: `public class StringComparison {\n    public static void main(String[] args) {\n        // Create strings using different methods\n        String s1 = "Test";                    // String literal (String Pool)\n        String s2 = new String("Test");        // Using new keyword (Heap)\n        String s3 = "Test";                    // Another literal (same as s1)\n        \n        // == operator compares object references\n        System.out.println("s1 == s2: " + (s1 == s2));\n        // Output: false (different objects in memory)\n        \n        System.out.println("s1 == s3: " + (s1 == s3));\n        // Output: true (same object in String Pool)\n        \n        // .equals() method compares content\n        System.out.println("s1.equals(s2): " + s1.equals(s2));\n        // Output: true (same content)\n        \n        System.out.println("s1.equals(s3): " + s1.equals(s3));\n        // Output: true (same content)\n        \n        // Best practice: Always use .equals() for content comparison\n        if (s1.equals(s2)) {\n            System.out.println("Strings have the same content");\n        }\n    }\n}`},
+            { id: 2, title: 'Find length and print characters with index', solution: `public class StringLengthAndChars {\n    public static void main(String[] args) {\n        String str = "Hello";\n        \n        // Find and display the length\n        System.out.println("Length: " + str.length());\n        // Output: Length: 5\n        \n        // Print each character with its index\n        for (int i = 0; i < str.length(); i++) {\n            System.out.println("Index " + i + ": " + str.charAt(i));\n        }\n        // Output:\n        // Index 0: H\n        // Index 1: e\n        // Index 2: l\n        // Index 3: l\n        // Index 4: o\n        \n        // Alternative: Print in reverse order\n        System.out.println("\\nReverse order:");\n        for (int i = str.length() - 1; i >= 0; i--) {\n            System.out.println("Index " + i + ": " + str.charAt(i));\n        }\n    }\n}`},
+            { id: 3, title: 'Convert "12345" to a character array', solution: `import java.util.Arrays;\n\npublic class StringToCharArray {\n    public static void main(String[] args) {\n        String str = "12345";\n        \n        // Convert string to character array\n        char[] chars = str.toCharArray();\n        \n        // Display the array using Arrays.toString()\n        System.out.println("Character array: " + Arrays.toString(chars));\n        // Output: Character array: [1, 2, 3, 4, 5]\n        \n        // Display each character individually\n        System.out.println("\\nIndividual characters:");\n        for (int i = 0; i < chars.length; i++) {\n            System.out.println("chars[" + i + "] = \'" + chars[i] + "\'");\n        }\n        \n        // Modify the array (this doesn\'t affect the original string)\n        chars[0] = \'9\';\n        System.out.println("\\nModified array: " + Arrays.toString(chars));\n        System.out.println("Original string: " + str); // Still "12345"\n    }\n}`},
+            { id: 4, title: 'Compare "Java" and "java" (case-sensitive and insensitive)', solution: `public class StringCaseComparison {\n    public static void main(String[] args) {\n        String s1 = "Java";\n        String s2 = "java";\n        \n        // Case-sensitive comparison\n        System.out.println("Case-sensitive (equals): " + s1.equals(s2));\n        // Output: false\n        \n        // Case-insensitive comparison\n        System.out.println("Case-insensitive (equalsIgnoreCase): " + s1.equalsIgnoreCase(s2));\n        // Output: true\n        \n        // Additional examples\n        String s3 = "JAVA";\n        String s4 = "java";\n        \n        System.out.println("\\nMore comparisons:");\n        System.out.println("s1.equals(s3): " + s1.equals(s3)); // false\n        System.out.println("s1.equalsIgnoreCase(s3): " + s1.equalsIgnoreCase(s3)); // true\n        System.out.println("s2.equals(s4): " + s2.equals(s4)); // true\n        \n        // Practical example: User input validation\n        String userInput = "JAVA";\n        if (userInput.equalsIgnoreCase("java")) {\n            System.out.println("\\nUser input matches \'java\' (case-insensitive)");\n        }\n    }\n}`},
+            { id: 5, title: 'Extract characters from index 3 to 7 from "Programming"', solution: `public class ExtractCharacters {\n    public static void main(String[] args) {\n        String str = "Programming";\n        \n        // Create destination array for 5 characters (8-3=5)\n        char[] dest = new char[5];\n        \n        // Extract characters from index 3 to 7 (inclusive to exclusive)\n        // srcBegin: 3 (inclusive), srcEnd: 8 (exclusive), dstBegin: 0\n        str.getChars(3, 8, dest, 0);\n        \n        // Convert char array back to string and display\n        String result = new String(dest);\n        System.out.println("Extracted characters: " + result);\n        // Output: gramm\n        \n        // Display individual characters\n        System.out.println("\\nIndividual extracted characters:");\n        for (int i = 0; i < dest.length; i++) {\n            System.out.println("dest[" + i + "] = \'" + dest[i] + "\'");\n        }\n        \n        // Alternative: Extract to middle of array\n        char[] dest2 = new char[10];\n        str.getChars(3, 8, dest2, 2); // Start at index 2 in destination\n        System.out.println("\\nExtracted to middle: " + new String(dest2));\n    }\n}`},
+            { id: 6, title: 'Compare and order "apple", "banana", "cherry"', solution: `import java.util.Arrays;\n\npublic class StringOrdering {\n    public static void main(String[] args) {\n        String s1 = "apple";\n        String s2 = "banana";\n        String s3 = "cherry";\n        \n        // Create array with fruits in random order\n        String[] fruits = {s3, s1, s2}; // cherry, apple, banana\n        \n        System.out.println("Original order: " + Arrays.toString(fruits));\n        // Output: [cherry, apple, banana]\n        \n        // Sort the array alphabetically\n        Arrays.sort(fruits);\n        System.out.println("Sorted order: " + Arrays.toString(fruits));\n        // Output: [apple, banana, cherry]\n        \n        // Manual comparison using compareTo()\n        System.out.println("\\nManual comparisons:");\n        System.out.println("apple.compareTo(banana): " + s1.compareTo(s2)); // negative\n        System.out.println("banana.compareTo(apple): " + s2.compareTo(s1)); // positive\n        System.out.println("apple.compareTo(apple): " + s1.compareTo(s1)); // zero\n        \n        // Case-insensitive sorting\n        String[] mixedCase = {"Apple", "banana", "Cherry"};\n        System.out.println("\\nMixed case before sort: " + Arrays.toString(mixedCase));\n        Arrays.sort(mixedCase);\n        System.out.println("Mixed case after sort: " + Arrays.toString(mixedCase));\n    }\n}`},
+            { id: 7, title: 'Check if "Hello World" contains "World"', solution: `public class StringContains {\n    public static void main(String[] args) {\n        String str = "Hello World";\n        String searchTerm = "World";\n        \n        // Check if string contains the substring\n        boolean contains = str.contains(searchTerm);\n        System.out.println("Does \'" + str + "\' contain \'" + searchTerm + "\'? " + contains);\n        // Output: true\n        \n        // Additional examples\n        System.out.println("\\nMore contains() examples:");\n        System.out.println("Contains \'Hello\': " + str.contains("Hello")); // true\n        System.out.println("Contains \'hello\': " + str.contains("hello")); // false (case-sensitive)\n        System.out.println("Contains \'Java\': " + str.contains("Java")); // false\n        System.out.println("Contains \' \': " + str.contains(" ")); // true (space)\n        \n        // Practical example: Search in multiple strings\n        String[] sentences = {\n            "Hello World",\n            "Java Programming",\n            "World of Code",\n            "Hello Java"\n        };\n        \n        System.out.println("\\nSentences containing \'World\':");\n        for (String sentence : sentences) {\n            if (sentence.contains("World")) {\n                System.out.println("- " + sentence);\n            }\n        }\n    }\n}`},
+            { id: 8, title: 'Check if "document.pdf" ends with ".pdf"', solution: `public class StringEndsWith {\n    public static void main(String[] args) {\n        String filename = "document.pdf";\n        String extension = ".pdf";\n        \n        // Check if filename ends with the extension\n        boolean endsWith = filename.endsWith(extension);\n        System.out.println("Does \'" + filename + "\' end with \'" + extension + "\'? " + endsWith);\n        // Output: true\n        \n        // Additional examples\n        System.out.println("\\nMore endsWith() examples:");\n        System.out.println("Ends with \'.txt\': " + filename.endsWith(".txt")); // false\n        System.out.println("Ends with \'pdf\': " + filename.endsWith("pdf")); // true\n        System.out.println("Ends with \'ment.pdf\': " + filename.endsWith("ment.pdf")); // true\n        \n        // Practical example: File type validation\n        String[] files = {\n            "document.pdf",\n            "image.jpg",\n            "data.txt",\n            "report.docx",\n            "photo.png"\n        };\n        \n        System.out.println("\\nPDF files:");\n        for (String file : files) {\n            if (file.endsWith(".pdf")) {\n                System.out.println("- " + file);\n            }\n        }\n        \n        // Check multiple extensions\n        System.out.println("\\nImage files:");\n        for (String file : files) {\n            if (file.endsWith(".jpg") || file.endsWith(".png")) {\n                System.out.println("- " + file);\n            }\n        }\n    }\n}`},
+            { id: 9, title: 'Check if an email starts with "admin"', solution: `public class StringStartsWith {\n    public static void main(String[] args) {\n        String email = "admin@example.com";\n        String prefix = "admin";\n        \n        // Check if email starts with the prefix\n        boolean startsWith = email.startsWith(prefix);\n        System.out.println("Does \'" + email + "\' start with \'" + prefix + "\'? " + startsWith);\n        // Output: true\n        \n        // Additional examples\n        System.out.println("\\nMore startsWith() examples:");\n        System.out.println("Starts with \'user\': " + email.startsWith("user")); // false\n        System.out.println("Starts with \'admin@\': " + email.startsWith("admin@")); // true\n        System.out.println("Starts with \'a\': " + email.startsWith("a")); // true\n        \n        // Practical example: Email categorization\n        String[] emails = {\n            "admin@company.com",\n            "user@company.com",\n            "support@company.com",\n            "admin@test.com",\n            "manager@company.com"\n        };\n        \n        System.out.println("\\nAdmin emails:");\n        for (String e : emails) {\n            if (e.startsWith("admin")) {\n                System.out.println("- " + e);\n            }\n        }\n        \n        // Check with offset (start checking from specific index)\n        String url = "https://example.com";\n        System.out.println("\\nURL starts with \'http\' from index 0: " + url.startsWith("http", 0)); // true\n        System.out.println("URL starts with \'http\' from index 1: " + url.startsWith("http", 1)); // false\n    }\n}`},
+            { id: 10, title: 'Compare "Java" and "JAVA" ignoring case', solution: `public class StringCompareIgnoreCase {\n    public static void main(String[] args) {\n        String s1 = "Java";\n        String s2 = "JAVA";\n        \n        // Compare strings ignoring case\n        int result = s1.compareToIgnoreCase(s2);\n        System.out.println("compareToIgnoreCase result: " + result);\n        // Output: 0 (they are equal ignoring case)\n        \n        // Interpret the result\n        if (result == 0) {\n            System.out.println("Strings are equal (ignoring case)");\n        } else if (result < 0) {\n            System.out.println("s1 comes before s2 alphabetically");\n        } else {\n            System.out.println("s1 comes after s2 alphabetically");\n        }\n        \n        // Additional examples\n        System.out.println("\\nMore compareToIgnoreCase() examples:");\n        System.out.println("\'apple\'.compareToIgnoreCase(\'BANANA\'): " + "apple".compareToIgnoreCase("BANANA")); // negative\n        System.out.println("\'ZEBRA\'.compareToIgnoreCase(\'apple\'): " + "ZEBRA".compareToIgnoreCase("apple")); // positive\n        System.out.println("\'Test\'.compareToIgnoreCase(\'TEST\'): " + "Test".compareToIgnoreCase("TEST")); // zero\n        \n        // Practical example: Case-insensitive sorting\n        String[] words = {"Apple", "banana", "Cherry", "date", "Elderberry"};\n        System.out.println("\\nOriginal order: " + java.util.Arrays.toString(words));\n        \n        // Sort ignoring case\n        java.util.Arrays.sort(words, String.CASE_INSENSITIVE_ORDER);\n        System.out.println("Sorted (case-insensitive): " + java.util.Arrays.toString(words));\n    }\n}`},
+            { id: 11, title: 'Find first occurrence of \'a\' in "banana"', solution: `public class IndexOfChar {\n    public static void main(String[] args) {\n        String str = "banana";\n        System.out.println(str.indexOf('a'));\n        // Output: 1\n    }\n}`},
+        { id: 12, title: 'Find last occurrence of \'a\' in "banana"', solution: `public class LastIndexOfChar {\n    public static void main(String[] args) {\n        String str = "banana";\n        System.out.println(str.lastIndexOf('a'));\n        // Output: 5\n    }\n}`},
+        { id: 13, title: 'Find position of "World" in "Hello World Welcome"', solution: `public class IndexOfString {\n    public static void main(String[] args) {\n        String str = "Hello World Welcome";\n        System.out.println(str.indexOf("World"));\n        // Output: 6\n    }\n}`},
+        { id: 14, title: 'Find all positions of \'o\' in "Google"', solution: `public class FindAllPositions {\n    public static void main(String[] args) {\n        String str = "Google";\n        int index = -1;\n        do {\n            index = str.indexOf('o', index + 1);\n            if (index != -1) {\n                System.out.println("Found 'o' at index: " + index);\n            }\n        } while (index != -1);\n        // Output: Found 'o' at index: 1\n        //         Found 'o' at index: 2\n        //         Found 'o' at index: 4\n    }\n}`},
+        { id: 15, title: 'Check if "programming" contains "gram" starting from index 3', solution: `public class IndexOfFromIndex {\n    public static void main(String[] args) {\n        String str = "programming";\n        int index = str.indexOf("gram", 3);\n        System.out.println("Found at index: " + index);\n        // Output: Found at index: 3\n    }\n}`},
+        { id: 16, title: 'Find last occurrence of "is" in "This is a test. This is only a test."', solution: `public class LastIndexOfString {\n    public static void main(String[] args) {\n        String str = "This is a test. This is only a test.";\n        System.out.println(str.lastIndexOf("is"));\n        // Output: 23\n    }\n}`},
+        { id: 17, title: 'Search for \'x\' in "example" starting from index 2', solution: `public class IndexOfCharFromIndex {\n    public static void main(String[] args) {\n        String str = "example";\n        System.out.println(str.indexOf('x', 2));\n        // Output: -1 (not found after index 2, 'x' is at index 1)\n    }\n}`},
+        { id: 18, title: 'Convert cases of "hello world" and "HELLO WORLD"', solution: `public class CaseConversion {\n    public static void main(String[] args) {\n        System.out.println("hello world".toUpperCase());\n        // Output: HELLO WORLD\n        System.out.println("HELLO WORLD".toLowerCase());\n        // Output: hello world\n    }\n}`},
+        { id: 19, title: 'Concatenate "Java", " is", " awesome"', solution: `public class ConcatExample {\n    public static void main(String[] args) {\n        String s1 = "Java";\n        String result = s1.concat(" is").concat(" awesome");\n        System.out.println(result);\n        // Output: Java is awesome\n    }\n}`},
+        { id: 20, title: 'Replace spaces with underscores in "Hello World Java"', solution: `public class ReplaceChar {\n    public static void main(String[] args) {\n        String str = "Hello World Java";\n        System.out.println(str.replace(' ', '_'));\n        // Output: Hello_World_Java\n    }\n}`},
+        { id: 21, title: 'Replace all \'a\' with \'e\' in "banana"', solution: `public class ReplaceAllChars {\n    public static void main(String[] args) {\n        String str = "banana";\n        System.out.println(str.replace('a', 'e'));\n        // Output: benene\n    }\n}`},
+        { id: 22, title: 'Extract "Java" from "I love Java programming"', solution: `public class SubstringRange {\n    public static void main(String[] args) {\n        String str = "I love Java programming";\n        System.out.println(str.substring(7, 11));\n        // Output: Java\n    }\n}`},
+        { id: 23, title: 'Extract everything after index 5 from "Hello World"', solution: `public class SubstringFromIndex {\n    public static void main(String[] args) {\n        String str = "Hello World";\n        System.out.println(str.substring(6));\n        // Output: World\n    }\n}`},
+        { id: 24, title: 'Remove leading/trailing spaces from "  Hello World  "', solution: `public class TrimExample {\n    public static void main(String[] args) {\n        String str = "  Hello World  ";\n        System.out.println("'" + str.trim() + "'");\n        // Output: 'Hello World'\n    }\n}`},
+        { id: 25, title: 'Check if "", " ", and "Hello" are empty', solution: `public class IsEmptyExample {\n    public static void main(String[] args) {\n        System.out.println("\\\"\\\" is empty: " + "".isEmpty()); // true\n        System.out.println("\\\" \\\" is empty: " + " ".isEmpty()); // false\n        System.out.println("\\\"Hello\\\" is empty: " + "Hello".isEmpty()); // false\n    }\n}`},
+        { id: 26, title: 'Check if "", "   ", and "Hello" are blank', solution: `public class IsBlankExample {\n    public static void main(String[] args) {\n        System.out.println("\\\"\\\" is blank: " + "".isBlank()); // true\n        System.out.println("\\\"   \\\" is blank: " + "   ".isBlank()); // true\n        System.out.println("\\\"Hello\\\" is blank: " + "Hello".isBlank()); // false\n    }\n}`},
+        { id: 27, title: 'Find length of "", " ", and "Hello"', solution: `public class LengthExample {\n    public static void main(String[] args) {\n        System.out.println("Length of \\\"\\\": " + "".length()); // 0\n        System.out.println("Length of \\\" \\\": " + " ".length()); // 1\n        System.out.println("Length of \\\"Hello\\\": " + "Hello".length()); // 5\n    }\n}`},
+        { id: 28, title: 'Split "apple,banana,cherry,date" by comma', solution: `public class SplitExample {\n    public static void main(String[] args) {\n        String str = "apple,banana,cherry,date";\n        String[] fruits = str.split(",");\n        for(String fruit : fruits) {\n            System.out.println(fruit);\n        }\n        // Output: apple\n        //         banana\n        //         cherry\n        //         date\n    }\n}`},
+        { id: 29, title: 'Split "one-two-three-four-five" into 3 parts', solution: `import java.util.Arrays;\n\npublic class SplitWithLimit {\n    public static void main(String[] args) {\n        String str = "one-two-three-four-five";\n        String[] parts = str.split("-", 3);\n        System.out.println(Arrays.toString(parts));\n        // Output: [one, two, three-four-five]\n    }\n}`},
+        { id: 30, title: 'Join ["Java", "Python", "C++"] with " | "', solution: `public class JoinExample {\n    public static void main(String[] args) {\n        String[] arr = {"Java", "Python", "C++"};\n        System.out.println(String.join(" | ", arr));\n        // Output: Java | Python | C++\n    }\n}`},
+        { id: 31, title: 'Split sentence into words and count them', solution: `public class WordCount {\n    public static void main(String[] args) {\n        String str = "Hello World Java Programming";\n        String[] words = str.split(" ");\n        System.out.println("Word count: " + words.length); // 4\n    }\n}`},
+        { id: 32, title: 'Extract username and domain from email', solution: `public class EmailParser {\n    public static void main(String[] args) {\n        String email = "john.doe@company.com";\n        String[] parts = email.split("@");\n        System.out.println("Username: " + parts[0]);\n        System.out.println("Domain: " + parts[1]);\n        // Output: Username: john.doe\n        //         Domain: company.com\n    }\n}`}
+    ]},
+    { level: 'INTERMEDIATE LEVEL', problems: [
+        { id: 33, title: 'Extract text after last "." in "java.lang.String"', solution: `public class ExtractAfterLastDot {\n    public static void main(String[] args) {\n        String str = "java.lang.String";\n        System.out.println(str.substring(str.lastIndexOf('.') + 1));\n        // Output: String\n    }\n}`},
+        { id: 34, title: 'Extract domain name from "user@example.com"', solution: `public class ExtractDomain {\n    public static void main(String[] args) {\n        String email = "user@example.com";\n        System.out.println(email.substring(email.indexOf('@') + 1));\n        // Output: example.com\n    }\n}`},
+        { id: 35, title: 'Count appearances of "Java" in a sentence', solution: `public class CountOccurrences {\n    public static void main(String[] args) {\n        String str = "Java is great. Java is powerful. I love Java.";\n        int count = 0, fromIndex = 0;\n        while ((fromIndex = str.indexOf("Java", fromIndex)) != -1) {\n            count++;\n            fromIndex++;\n        }\n        System.out.println(count); // 3\n    }\n}`},
+        { id: 36, title: 'Find the first non-repeated character in "programming"', solution: `public class FirstNonRepeated {\n    public static void main(String[] args) {\n        String str = "programming";\n        for (char c : str.toCharArray()) {\n            if (str.indexOf(c) == str.lastIndexOf(c)) {\n                System.out.println("First non-repeated: " + c);\n                break;\n            }\n        }\n        // Output: First non-repeated: p\n    }\n}`},
+        { id: 37, title: 'Extract text between first \'[\' and last \']\'', solution: `public class ExtractBetweenBrackets {\n    public static void main(String[] args) {\n        String str = "Hello[World[Java]]";\n        int start = str.indexOf('[');\n        int end = str.lastIndexOf(']');\n        if(start != -1 && end != -1 && start < end) {\n            System.out.println(str.substring(start + 1, end));\n        }\n        // Output: World[Java]\n    }\n}`},
+        { id: 38, title: 'Find the position where two strings differ', solution: `public class FindDifferencePosition {\n    public static void main(String[] args) {\n        String s1 = "Hello World";\n        String s2 = "Hello Java";\n        for (int i = 0; i < Math.min(s1.length(), s2.length()); i++) {\n            if (s1.charAt(i) != s2.charAt(i)) {\n                System.out.println("Differ at index: " + i);\n                break;\n            }\n        }\n        // Output: Differ at index: 6\n    }\n}`},
+        { id: 39, title: 'Extract file extension from "document.backup.tar.gz"', solution: `public class ExtractFullExtension {\n    public static void main(String[] args) {\n        String file = "document.backup.tar.gz";\n        System.out.println(file.substring(file.indexOf('.') + 1));\n        // Output: backup.tar.gz\n    }\n}`},
+        { id: 40, title: 'Extract "World" from "Hello{World}Java"', solution: `public class ExtractBetweenBraces {\n    public static void main(String[] args) {\n        String str = "Hello{World}Java";\n        System.out.println(str.substring(str.indexOf('{') + 1, str.indexOf('}')));\n        // Output: World\n    }\n}`},
+        { id: 41, title: 'Replace first "cat" with "dog" in "cat and cat"', solution: `public class ReplaceFirst {\n    public static void main(String[] args) {\n        String str = "cat and cat";\n        System.out.println(str.replaceFirst("cat", "dog"));\n        // Output: dog and cat\n    }\n}`},
+        { id: 42, title: 'Replace all digits in "abc123def456" with "*"', solution: `public class ReplaceAllDigits {\n    public static void main(String[] args) {\n        String str = "abc123def456";\n        System.out.println(str.replaceAll("\\\\d", "*"));\n        // Output: abc***def***\n    }\n}`},
+        { id: 43, title: 'Remove all vowels from "Education"', solution: `public class RemoveVowels {\n    public static void main(String[] args) {\n        String str = "Education";\n        System.out.println(str.replaceAll("[aeiouAEIOU]", ""));\n        // Output: dctn\n    }\n}`},
+        { id: 44, title: 'Replace multiple spaces with a single space', solution: `public class ReplaceMultipleSpaces {\n    public static void main(String[] args) {\n        String str = "Hello    World   Java";\n        System.out.println(str.replaceAll("\\\\s+", " "));\n        // Output: Hello World Java\n    }\n}`},
+        { id: 45, title: 'Check if a string contains only alphabets', solution: `public class OnlyAlphabets {\n    public static void main(String[] args) {\n        String str = "HelloWorld";\n        System.out.println(str.matches("[a-zA-Z]+"));\n        // Output: true\n    }\n}`},
+        { id: 46, title: 'Validate if a string is a valid integer', solution: `public class ValidateInteger {\n    public static void main(String[] args) {\n        String str = "-12345";\n        System.out.println(str.matches("-?\\\\d+"));\n        // Output: true\n    }\n}`},
+        { id: 47, title: 'Check if a password contains at least one digit', solution: `public class PasswordHasDigit {\n    public static void main(String[] args) {\n        String pass = "password123";\n        System.out.println(pass.matches(".*\\\\d.*"));\n        // Output: true\n    }\n}`},
+        { id: 48, title: 'Replace "Java" with "Python" (case-sensitive)', solution: `public class ReplaceString {\n    public static void main(String[] args) {\n        String str = "I love Java";\n        System.out.println(str.replace("Java", "Python"));\n        // Output: I love Python\n    }\n}`},
+        { id: 49, title: 'Remove all special characters from "Hello@World#2024!"', solution: `public class RemoveSpecialChars {\n    public static void main(String[] args) {\n        String str = "Hello@World#2024!";\n        System.out.println(str.replaceAll("[^a-zA-Z0-9]", ""));\n        // Output: HelloWorld2024\n    }\n}`},
+        { id: 50, title: 'Replace only alphabetic chars with "*" in "abc123xyz"', solution: `public class ReplaceAlphabets {\n    public static void main(String[] args) {\n        String str = "abc123xyz";\n        System.out.println(str.replaceAll("[a-zA-Z]", "*"));\n        // Output: ***123***\n    }\n}`},
+        { id: 51, title: 'Convert integer 12345 to String', solution: `public class IntToString {\n    public static void main(String[] args) {\n        int num = 12345;\n        String str = String.valueOf(num);\n        System.out.println(str.length());\n        // Output: 5\n    }\n}`},
+        { id: 52, title: 'Convert boolean, char, float to String', solution: `public class ValueOfExamples {\n    public static void main(String[] args) {\n        System.out.println(String.valueOf(true)); // true\n        System.out.println(String.valueOf('c')); // c\n        System.out.println(String.valueOf(12.34f)); // 12.34\n    }\n}`},
+        { id: 53, title: 'Convert char array to String', solution: `public class CharArrayToString {\n    public static void main(String[] args) {\n        char[] chars = {'H','e','l','l','o'};\n        String str = String.valueOf(chars);\n        System.out.println(str);\n        // Output: Hello\n    }\n}`},
+        { id: 54, title: 'Convert a portion of char array to String', solution: `public class CopyValueOf {\n    public static void main(String[] args) {\n        char[] chars = {'H','e','l','l','o'};\n        String str = String.copyValueOf(chars, 1, 3);\n        System.out.println(str);\n        // Output: ell\n    }\n}`},
+        { id: 55, title: 'Convert double 123.456 to String', solution: `public class DoubleToString {\n    public static void main(String[] args) {\n        double num = 123.456;\n        String str = String.valueOf(num);\n        System.out.println(str);\n        // Output: 123.456\n    }\n}`},
+        { id: 56, title: 'Remove only leading spaces from "   Hello World   "', solution: `public class StripLeading {\n    public static void main(String[] args) {\n        String str = "   Hello World   ";\n        System.out.println("'" + str.stripLeading() + "'");\n        // Output: 'Hello World   '\n    }\n}`},
+        { id: 57, title: 'Remove only trailing spaces from "   Hello World   "', solution: `public class StripTrailing {\n    public static void main(String[] args) {\n        String str = "   Hello World   ";\n        System.out.println("'" + str.stripTrailing() + "'");\n        // Output: '   Hello World'\n    }\n}`},
+        { id: 58, title: 'Compare trim() vs strip() with Unicode whitespace', solution: `public class TrimVsStrip {\n    public static void main(String[] args) {\n        String unicodeSpace = "\\u2005Hello\\u2005"; // Unicode space\n        System.out.println("trim: '" + unicodeSpace.trim() + "'");\n        System.out.println("strip: '" + unicodeSpace.strip() + "'");\n        // strip() handles Unicode whitespace better\n    }\n}`},
+        { id: 59, title: 'Remove all types of whitespace from start and end', solution: `public class StripExample {\n    public static void main(String[] args) {\n        String str = "  \\t\\n Hello \\n  ";\n        System.out.println("'" + str.strip() + "'");\n        // Output: 'Hello'\n    }\n}`},
+        { id: 60, title: 'Create a string with "Java " repeated 5 times', solution: `public class RepeatExample {\n    public static void main(String[] args) {\n        String str = "Java ";\n        System.out.println(str.repeat(5));\n        // Output: Java Java Java Java Java \n    }\n}`},
+        { id: 61, title: 'Print a pattern of 10 stars using repeat', solution: `public class StarPattern {\n    public static void main(String[] args) {\n        System.out.println("*".repeat(10));\n        // Output: **********\n    }\n}`},
+        { id: 62, title: 'Create a line separator of 50 dashes', solution: `public class LineSeparator {\n    public static void main(String[] args) {\n        System.out.println("-".repeat(50));\n        // Output: --------------------------------------------------\n    }\n}`},
+        { id: 63, title: 'Demonstrate string pool behavior', solution: `public class StringPoolDemo {\n    public static void main(String[] args) {\n        String s1 = "pool";\n        String s2 = new String("pool");\n        String s3 = s2.intern();\n        System.out.println(s1 == s2); // false\n        System.out.println(s1 == s3); // true\n    }\n}`},
+        { id: 64, title: 'Check if two strings refer to same object in pool', solution: `public class StringPoolReference {\n    public static void main(String[] args) {\n        String s1 = "test";\n        String s2 = new String("test").intern();\n        System.out.println(s1 == s2);\n        // Output: true\n    }\n}`},
+        { id: 65, title: 'Force a new string into the string pool', solution: `public class ForceIntern {\n    public static void main(String[] args) {\n        String s1 = new String("force");\n        String s2 = "force";\n        System.out.println(s1 == s2); // false\n        s1 = s1.intern();\n        System.out.println(s1 == s2); // true\n    }\n}`},
+        { id: 66, title: 'Compare memory behavior of string concatenation', solution: `public class ConcatenationMemory {\n    public static void main(String[] args) {\n        // Using + or concat() in a loop creates many intermediate String objects.\n        // StringBuilder avoids this by modifying a single internal char array.\n        StringBuilder sb = new StringBuilder();\n        for (int i=0; i<10; i++) {\n            sb.append(i);\n        }\n        System.out.println(sb.toString());\n        // Output: 0123456789\n    }\n}`}
+    ]},
+    { level: 'ADVANCED LEVEL', problems: [
+        { id: 67, title: 'Check if "listen" and "silent" are anagrams', solution: `import java.util.Arrays;\n\npublic class AnagramCheck {\n    public static void main(String[] args) {\n        String s1 = "listen", s2 = "silent";\n        char[] c1 = s1.toCharArray();\n        char[] c2 = s2.toCharArray();\n        Arrays.sort(c1);\n        Arrays.sort(c2);\n        System.out.println(Arrays.equals(c1, c2));\n        // Output: true\n    }\n}`},
+        { id: 68, title: 'Check if "waterbottle" is a rotation of "erbottlewat"', solution: `public class StringRotation {\n    public static void main(String[] args) {\n        String s1 = "waterbottle", s2 = "erbottlewat";\n        boolean isRotation = s1.length() == s2.length() && (s1 + s1).contains(s2);\n        System.out.println(isRotation);\n        // Output: true\n    }\n}`},
+        { id: 69, title: 'Remove duplicate characters from "programming"', solution: `public class RemoveDuplicates {\n    public static void main(String[] args) {\n        String str = "programming";\n        StringBuilder sb = new StringBuilder();\n        str.chars().distinct().forEach(c -> sb.append((char) c));\n        System.out.println(sb.toString());\n        // Output: progamin\n    }\n}`},
+        { id: 70, title: 'Find longest substring without repeating characters in "abcabcbb"', solution: `import java.util.HashSet;\nimport java.util.Set;\n\npublic class LongestUniqueSubstring {\n    public static void main(String[] args) {\n        String s = "abcabcbb";\n        int maxLen = 0;\n        int left = 0;\n        Set<Character> seen = new HashSet<>();\n        \n        for (int right = 0; right < s.length(); right++) {\n            while (seen.contains(s.charAt(right))) {\n                seen.remove(s.charAt(left));\n                left++;\n            }\n            seen.add(s.charAt(right));\n            maxLen = Math.max(maxLen, right - left + 1);\n        }\n        System.out.println("Longest length: " + maxLen);\n        // Output: Longest length: 3 (abc)\n    }\n}`},
+        { id: 71, title: 'Compress "aaabbcccc" to "a3b2c4"', solution: `public class StringCompression {\n    public static void main(String[] args) {\n        String str = "aaabbcccc";\n        StringBuilder compressed = new StringBuilder();\n        int count = 0;\n        for (int i = 0; i < str.length(); i++) {\n            count++;\n            if (i + 1 >= str.length() || str.charAt(i) != str.charAt(i + 1)) {\n                compressed.append(str.charAt(i));\n                compressed.append(count);\n                count = 0;\n            }\n        }\n        System.out.println(compressed.toString());\n        // Output: a3b2c4\n    }\n}`},
+        { id: 72, title: 'Check if "racecar" is a palindrome', solution: `public class PalindromeCheck {\n    public static void main(String[] args) {\n        String str = "racecar";\n        String reversed = new StringBuilder(str).reverse().toString();\n        System.out.println(str.equals(reversed));\n        // Output: true\n    }\n}`},
+        { id: 73, title: 'Check palindrome ignoring case/spaces: "A man a plan a canal Panama"', solution: `public class PalindromeIgnoreCase {\n    public static void main(String[] args) {\n        String str = "A man a plan a canal Panama";\n        String clean = str.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();\n        String reversed = new StringBuilder(clean).reverse().toString();\n        System.out.println(clean.equals(reversed));\n        // Output: true\n    }\n}`},
+        { id: 74, title: 'Reverse each word in "Hello World Java"', solution: `public class ReverseEachWord {\n    public static void main(String[] args) {\n        String s = "Hello World Java";\n        String[] words = s.split(" ");\n        StringBuilder reversedSentence = new StringBuilder();\n        for(String word : words) {\n            reversedSentence.append(new StringBuilder(word).reverse().toString()).append(" ");\n        }\n        System.out.println(reversedSentence.toString().trim());\n        // Output: olleH dlroW avaJ\n    }\n}`},
+        { id: 75, title: 'Find all permutations of "abc"', solution: `public class StringPermutations {\n    public static void main(String[] args) {\n        permute("", "abc");\n    }\n    \n    static void permute(String prefix, String str) {\n        int n = str.length();\n        if (n == 0) {\n            System.out.println(prefix);\n        } else {\n            for (int i = 0; i < n; i++) {\n                permute(prefix + str.charAt(i), \n                       str.substring(0, i) + str.substring(i + 1, n));\n            }\n        }\n    }\n    // Output: abc, acb, bac, bca, cab, cba\n}`},
+        { id: 76, title: 'Validate basic email format', solution: `public class EmailValidation {\n    public static void main(String[] args) {\n        String email = "test@example.com";\n        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}$";\n        System.out.println(email.matches(regex));\n        // Output: true\n    }\n}`},
+        { id: 77, title: 'Extract all words starting with a capital letter', solution: `public class ExtractCapitalWords {\n    public static void main(String[] args) {\n        String text = "Java is a powerful Language";\n        for(String word : text.split(" ")) {\n            if(Character.isUpperCase(word.charAt(0))) {\n                System.out.println(word);\n            }\n        }\n        // Output: Java\n        //         Language\n    }\n}`},
+        { id: 78, title: 'Count words in a sentence with multiple spaces', solution: `public class CountWords {\n    public static void main(String[] args) {\n        String s = "  Hello   World  ";\n        System.out.println(s.trim().split("\\\\s+").length);\n        // Output: 2\n    }\n}`},
+        { id: 79, title: 'Validate Indian mobile number format', solution: `public class ValidateIndianMobile {\n    public static void main(String[] args) {\n        String phone = "9876543210";\n        System.out.println(phone.matches("[6-9]\\\\d{9}"));\n        // Output: true\n    }\n}`},
+        { id: 80, title: 'Extract all numbers from "There are 365 days and 24 hours"', solution: `import java.util.Arrays;\n\npublic class ExtractNumbers {\n    public static void main(String[] args) {\n        String s = "There are 365 days and 24 hours";\n        String[] numbers = s.replaceAll("[^0-9 ]", "").trim().split("\\\\s+");\n        System.out.println(Arrays.toString(numbers));\n        // Output: [365, 24]\n    }\n}`},
+        { id: 81, title: 'Check if string contains only alphanumeric characters', solution: `public class AlphanumericCheck {\n    public static void main(String[] args) {\n        String s = "AlphaNumeric123";\n        System.out.println(s.matches("[a-zA-Z0-9]+"));\n        // Output: true\n    }\n}`},
+        { id: 82, title: 'Validate if string is a valid hexadecimal number', solution: `public class HexValidation {\n    public static void main(String[] args) {\n        String hex = "1A3F";\n        System.out.println(hex.matches("[0-9a-fA-F]+"));\n        // Output: true\n    }\n}`},
+        { id: 83, title: 'Remove all non-alphabetic characters except spaces', solution: `public class RemoveNonAlpha {\n    public static void main(String[] args) {\n        String s = "Test@123 String!";\n        System.out.println(s.replaceAll("[^a-zA-Z ]", ""));\n        // Output: Test String\n    }\n}`},
+        { id: 84, title: 'Check if a string matches date format DD-MM-YYYY', solution: `public class DateFormatValidation {\n    public static void main(String[] args) {\n        String date = "03-10-2025";\n        System.out.println(date.matches("(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\\\\d{4}"));\n        // Output: true\n    }\n}`},
+        { id: 85, title: 'Format string using formatted()', solution: `public class FormattedExample {\n    public static void main(String[] args) {\n        String template = "Hello %s, you are %d years old";\n        System.out.println(template.formatted("User", 25));\n        // Output: Hello User, you are 25 years old\n    }\n}`},
+        { id: 86, title: 'Create a formatted invoice string', solution: `public class InvoiceFormat {\n    public static void main(String[] args) {\n        String invoice = "Item: %-10s | Qty: %d | Price: $%.2f";\n        System.out.println(invoice.formatted("Laptop", 1, 1200.50));\n        // Output: Item: Laptop     | Qty: 1 | Price: $1200.50\n    }\n}`},
+        { id: 87, title: 'Format decimal number to 2 decimal places', solution: `public class DecimalFormat {\n    public static void main(String[] args) {\n        double price = 49.999;\n        System.out.println(String.format("%.2f", price));\n        // Output: 50.00\n    }\n}`},
+        { id: 88, title: 'Parse a CSV line "John,Doe,30,Engineer"', solution: `import java.util.Arrays;\n\npublic class ParseCSV {\n    public static void main(String[] args) {\n        String csv = "John,Doe,30,Engineer";\n        String[] fields = csv.split(",");\n        System.out.println(Arrays.toString(fields));\n        // Output: [John, Doe, 30, Engineer]\n    }\n}`},
+        { id: 89, title: 'Validate a URL format', solution: `public class URLValidation {\n    public static void main(String[] args) {\n        String url = "https://example.com";\n        System.out.println(url.matches("https?://.+"));\n        // Output: true\n    }\n}`},
+        { id: 90, title: 'Extract filename from path "/home/user/documents/file.txt"', solution: `public class ExtractFilename {\n    public static void main(String[] args) {\n        String path = "/home/user/documents/file.txt";\n        System.out.println(path.substring(path.lastIndexOf('/') + 1));\n        // Output: file.txt\n    }\n}`},
+        { id: 91, title: 'Convert camelCase to snake_case', solution: `public class CamelToSnake {\n    public static void main(String[] args) {\n        String camel = "myVariableName";\n        String snake = camel.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();\n        System.out.println(snake);\n        // Output: my_variable_name\n    }\n}`},
+        { id: 92, title: 'Mask credit card number', solution: `public class MaskCreditCard {\n    public static void main(String[] args) {\n        String card = "1234567890123456";\n        String lastFour = card.substring(card.length() - 4);\n        String masked = "*".repeat(card.length() - 4) + lastFour;\n        System.out.println(masked);\n        // Output: ************3456\n    }\n}`},
+        { id: 93, title: 'Find longest common prefix in ["flower","flow","flight"]', solution: `public class LongestCommonPrefix {\n    public static void main(String[] args) {\n        String[] strs = {"flower", "flow", "flight"};\n        String prefix = strs[0];\n        for (int i = 1; i < strs.length; i++) {\n            while (strs[i].indexOf(prefix) != 0) {\n                prefix = prefix.substring(0, prefix.length() - 1);\n            }\n        }\n        System.out.println(prefix);\n        // Output: fl\n    }\n}`},
+        { id: 94, title: 'Implement string compression: "aabcccccaaa" → "a2b1c5a3"', solution: `public class StringCompressionAdvanced {\n    public static void main(String[] args) {\n        String str = "aabcccccaaa";\n        StringBuilder compressed = new StringBuilder();\n        for (int i = 0; i < str.length(); ) {\n            char c = str.charAt(i);\n            int count = 0;\n            while (i < str.length() && str.charAt(i) == c) {\n                count++;\n                i++;\n            }\n            compressed.append(c).append(count);\n        }\n        System.out.println(compressed.toString());\n        // Output: a2b1c5a3\n    }\n}`},
+        { id: 95, title: 'Convert Roman numeral "XIV" to integer 14', solution: `import java.util.HashMap;\nimport java.util.Map;\n\npublic class RomanToInteger {\n    public static void main(String[] args) {\n        String roman = "XIV";\n        Map<Character, Integer> map = new HashMap<>();\n        map.put('I', 1); map.put('V', 5); map.put('X', 10);\n        map.put('L', 50); map.put('C', 100); map.put('D', 500); map.put('M', 1000);\n        \n        int result = 0;\n        for (int i = 0; i < roman.length(); i++) {\n            int current = map.get(roman.charAt(i));\n            if (i + 1 < roman.length() && current < map.get(roman.charAt(i + 1))) {\n                result -= current;\n            } else {\n                result += current;\n            }\n        }\n        System.out.println(result);\n        // Output: 14\n    }\n}`},
+        { id: 96, title: 'Convert "hello world" to title case', solution: `public class ToTitleCase {\n    public static void main(String[] args) {\n        String s = "hello world";\n        String[] words = s.split(" ");\n        StringBuilder result = new StringBuilder();\n        for(String word : words) {\n            result.append(Character.toUpperCase(word.charAt(0)))\n                  .append(word.substring(1)).append(" ");\n        }\n        System.out.println(result.toString().trim());\n        // Output: Hello World\n    }\n}`},
+        { id: 97, title: 'Count vowels and consonants in "Programming"', solution: `public class CountVowelsConsonants {\n    public static void main(String[] args) {\n        String s = "Programming".toLowerCase();\n        int vowels = 0, consonants = 0;\n        for(char c : s.toCharArray()) {\n            if(c >= 'a' && c <= 'z') {\n                if("aeiou".indexOf(c) != -1) vowels++; \n                else consonants++;\n            }\n        }\n        System.out.println("Vowels: " + vowels + ", Consonants: " + consonants);\n        // Output: Vowels: 3, Consonants: 8\n    }\n}`},
+        { id: 98, title: 'Remove all adjacent duplicates: "abbaca" → "ca"', solution: `public class RemoveAdjacentDuplicates {\n    public static void main(String[] args) {\n        String s = "abbaca";\n        StringBuilder sb = new StringBuilder();\n        for (char c : s.toCharArray()) {\n            if (sb.length() > 0 && sb.charAt(sb.length() - 1) == c) {\n                sb.deleteCharAt(sb.length() - 1);\n            } else {\n                sb.append(c);\n            }\n        }\n        System.out.println(sb.toString());\n        // Output: ca\n    }\n}`},
+        { id: 99, title: 'Find all palindromic substrings in "abba"', solution: `import java.util.HashSet;\nimport java.util.Set;\n\npublic class FindPalindromicSubstrings {\n    public static void main(String[] args) {\n        String s = "abba";\n        Set<String> palindromes = new HashSet<>();\n        \n        for (int i = 0; i < s.length(); i++) {\n            for (int j = i + 1; j <= s.length(); j++) {\n                String sub = s.substring(i, j);\n                if (isPalindrome(sub)) {\n                    palindromes.add(sub);\n                }\n            }\n        }\n        System.out.println(palindromes);\n        // Output: [a, b, bb, abba]\n    }\n    \n    static boolean isPalindrome(String s) {\n        int left = 0, right = s.length() - 1;\n        while (left < right) {\n            if (s.charAt(left++) != s.charAt(right--)) return false;\n        }\n        return true;\n    }\n}`},
+        { id: 100, title: 'Implement wildcard pattern matching: "a*b" vs "axxxb"', solution: `public class WildcardMatching {\n    public static void main(String[] args) {\n        String pattern = "a.*b"; // Convert wildcard * to regex .*\n        String text = "axxxb";\n        System.out.println(text.matches(pattern));\n        // Output: true\n    }\n}`}
+    ]},
+    { level: 'EXPERT LEVEL CHALLENGES', problems: [
+        { id: 101, title: 'Reverse words in a sentence: "Hello World" → "World Hello"', solution: `String s = "Hello World";\nString[] words = s.trim().split("\\\\s+");\nStringBuilder out = new StringBuilder();\nfor(int i = words.length - 1; i >= 0; i--) {\n    out.append(words[i]).append(" ");\n}\nSystem.out.println(out.toString().trim()); // World Hello`},
+        { id: 102, title: 'Find the shortest palindrome by adding characters to the front', solution: `String shortestPalindrome(String s) {\n    String rev = new StringBuilder(s).reverse().toString();\n    String combined = s + "#" + rev;\n    int[] lps = new int[combined.length()];\n    for (int i = 1; i < combined.length(); i++) {\n        int j = lps[i - 1];\n        while (j > 0 && combined.charAt(i) != combined.charAt(j)) {\n            j = lps[j - 1];\n        }\n        if (combined.charAt(i) == combined.charAt(j)) j++;\n        lps[i] = j;\n    }\n    return rev.substring(0, s.length() - lps[combined.length() - 1]) + s;\n}\nSystem.out.println(shortestPalindrome("abcd")); // dcbabcd`},
+        { id: 103, title: 'Encode string using Caesar cipher with shift of 3', solution: `String s = "ABCXYZ"; int shift = 3;\nStringBuilder encoded = new StringBuilder();\nfor(char c : s.toCharArray()) {\n    if(Character.isLetter(c)){\n       char base = Character.isUpperCase(c) ? 'A' : 'a';\n       encoded.append((char)(((c - base + shift) % 26) + base));\n    } else {\n       encoded.append(c);\n    }\n}\nSystem.out.println(encoded.toString()); // DEFABC`},
+        { id: 104, title: 'Decode run-length encoding: "a3b2c1" → "aaabbc"', solution: `String encoded = "a3b2c1";\nStringBuilder decoded = new StringBuilder();\njava.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\\\D)(\\\\d+)");\njava.util.regex.Matcher matcher = pattern.matcher(encoded);\nwhile(matcher.find()){\n    decoded.append(matcher.group(1).repeat(Integer.parseInt(matcher.group(2))));\n}\nSystem.out.println(decoded.toString()); // aaabbc`},
+        { id: 105, title: 'Check if two strings are one edit away', solution: `boolean oneEditAway(String s1, String s2) {\n    if(Math.abs(s1.length() - s2.length()) > 1) return false;\n    String shorter = s1.length() < s2.length() ? s1 : s2;\n    String longer = s1.length() < s2.length() ? s2 : s1;\n    int i = 0, j = 0;\n    boolean foundDifference = false;\n    while(i < shorter.length() && j < longer.length()) {\n        if(shorter.charAt(i) != longer.charAt(j)) {\n            if(foundDifference) return false;\n            foundDifference = true;\n            if(shorter.length() == longer.length()) i++;\n        } else {\n            i++;\n        }\n        j++;\n    }\n    return true;\n}\nSystem.out.println(oneEditAway("pale", "ple"));   // true\nSystem.out.println(oneEditAway("pale", "bale"));  // true\nSystem.out.println(oneEditAway("pale", "bake"));  // false`},
+        { id: 106, title: 'Find the minimum window substring', solution: `String minWindow(String s, String t) {\n    if(s.isEmpty() || t.isEmpty()) return \"\";\n    java.util.Map<Character,Integer> need = new java.util.HashMap<>();\n    for(char c : t.toCharArray()) need.put(c, need.getOrDefault(c,0)+1);\n    int required = need.size();\n    int formed = 0;\n    java.util.Map<Character,Integer> window = new java.util.HashMap<>();\n    int l=0,r=0,minLen=Integer.MAX_VALUE,start=0;\n    while(r<s.length()){\n        char c=s.charAt(r);\n        window.put(c,window.getOrDefault(c,0)+1);\n        if(need.containsKey(c)&&window.get(c).intValue()==need.get(c).intValue()) formed++;\n        while(l<=r&&formed==required){\n            if(r-l+1<minLen){minLen=r-l+1;start=l;}\n            char d=s.charAt(l);\n            window.put(d,window.get(d)-1);\n            if(need.containsKey(d)&&window.get(d)<need.get(d)) formed--;\n            l++;\n        }\n        r++;\n    }\n    return minLen==Integer.MAX_VALUE?\"\":s.substring(start,start+minLen);\n}\nSystem.out.println(minWindow(\"ADOBECODEBANC\",\"ABC\")); // BANC`},
+        { id: 107, title: 'Implement string multiplication: "abc" * 3', solution: `System.out.println("abc".repeat(3)); // abcabcabc`},
+        { id: 108, title: 'Count occurrences of each character in "programming"', solution: `String s = "programming";\njava.util.Map<Character, Integer> counts = new java.util.HashMap<>();\nfor(char c : s.toCharArray()) {\n    counts.put(c, counts.getOrDefault(c, 0) + 1);\n}\nSystem.out.println(counts);`},
+        { id: 109, title: 'Find the longest palindromic substring in "babad"', solution: `String longestPalindrome(String s){\n    if(s==null||s.length()<1) return \"\";\n    int start=0,end=0;\n    for(int i=0;i<s.length();i++){\n        int len1=expand(s,i,i);\n        int len2=expand(s,i,i+1);\n        int len=Math.max(len1,len2);\n        if(len>end-start){\n            start=i-(len-1)/2;\n            end=i+len/2;\n        }\n    }\n    return s.substring(start,end+1);\n}\nint expand(String s,int l,int r){\n    while(l>=0&&r<s.length()&&s.charAt(l)==s.charAt(r)){\n        l--;r++;}\n    return r-l-1;\n}\nSystem.out.println(longestPalindrome("babad")); // bab or aba`},
+        { id: 110, title: 'Check for balanced brackets in "((a+b)*(c-d))"', solution: `String s = "((a+b)*(c-d))";\njava.util.Stack<Character> stack = new java.util.Stack<>();\nboolean balanced = true;\nfor(char c : s.toCharArray()){\n    if(c == '(') stack.push(c);\n    if(c == ')') {\n        if(stack.isEmpty()) { balanced = false; break; }\n        stack.pop();\n    }\n}\nif(!stack.isEmpty()) balanced = false;\nSystem.out.println(balanced); // true`},
+        { id: 111, title: 'Remove "World" from "Hello World Java"', solution: `String s = "Hello World Java";\nSystem.out.println(s.replace("World ", "")); // Hello Java`},
+        { id: 112, title: 'Left rotate "abcdef" by 2 positions', solution: `String s = "abcdef"; int n = 2;\nString rotated = s.substring(n) + s.substring(0, n);\nSystem.out.println(rotated); // cdefab`},
+        { id: 113, title: 'Convert snake_case to camelCase', solution: `String snake = "my_variable_name";\nString[] parts = snake.split("_");\nStringBuilder camel = new StringBuilder(parts[0]);\nfor(int i=1; i<parts.length; i++) {\n    camel.append(parts[i].substring(0,1).toUpperCase()).append(parts[i].substring(1));\n}\nSystem.out.println(camel.toString()); // myVariableName`},
+        { id: 114, title: 'Find all unique characters in "programming"', solution: `String s = "programming";\nStringBuilder unique = new StringBuilder();\ns.chars().distinct().forEach(c -> unique.append((char)c));\nSystem.out.println(unique.toString()); // progamin`},
+        { id: 115, title: 'Implement natural string comparison', solution: `java.util.Comparator<String> naturalOrder = (a, b) -> {\n    int i = 0, j = 0;\n    while (i < a.length() && j < b.length()) {\n        if (Character.isDigit(a.charAt(i)) && Character.isDigit(b.charAt(j))) {\n            StringBuilder num1 = new StringBuilder();\n            StringBuilder num2 = new StringBuilder();\n            while (i < a.length() && Character.isDigit(a.charAt(i))) num1.append(a.charAt(i++));\n            while (j < b.length() && Character.isDigit(b.charAt(j))) num2.append(b.charAt(j++));\n            int cmp = Integer.compare(Integer.parseInt(num1.toString()), Integer.parseInt(num2.toString()));\n            if (cmp != 0) return cmp;\n        } else {\n            if (a.charAt(i) != b.charAt(j)) return a.charAt(i) - b.charAt(j);\n            i++; j++;\n        }\n    }\n    return a.length() - b.length();\n};\njava.util.List<String> list = java.util.Arrays.asList("file10", "file2", "file1");\nlist.sort(naturalOrder);\nSystem.out.println(list); // [file1, file2, file10]`}
+    ]}
+
+    ];
+
+    function populateMethods() {
+        const methodListContainer = document.getElementById('method-list');
+        methodListContainer.innerHTML = '';
+        methodData.forEach(group => {
+            let categoryHtml = `<div class="method-category-group">
+                <h3 class="text-2xl font-semibold mt-8 mb-4">${group.category}</h3>`;
+            
+            group.methods.forEach(method => {
+                categoryHtml += `
+                    <div class="method-card-wrapper">
+                        <div id="${method.name.replace('()', '')}" class="method-card bg-white rounded-lg shadow-sm border border-stone-200 mb-2 border-l-4 border-transparent transition-all">
+                            <div class="method-header cursor-pointer p-4 flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-semibold text-lg text-teal-700">${method.name}</h4>
+                                    <p class="text-sm text-slate-500">${method.syntax}</p>
+                                </div>
+                                <span class="text-2xl text-slate-400 transform transition-transform">+</span>
+                            </div>
+                            <div class="method-body hidden p-4 border-t border-stone-200">
+                                <p class="mb-4">${method.description}</p>
+                                <h5 class="font-semibold mb-1">Example:</h5>
+                                <div class="relative">
+                                    <pre class="code-block">${method.example}</pre>
+                                    <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs px-2 py-1 rounded">Copy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            categoryHtml += '</div>';
+            methodListContainer.innerHTML += categoryHtml;
+        });
+    }
+
+    function populateCheatsheet() {
+        const container = document.getElementById('cheatsheet-container');
+        container.innerHTML = '';
+        cheatSheetData.forEach(group => {
+            let tableHtml = `<h3 class="text-2xl font-semibold">${group.category}</h3>
+            <div class="overflow-x-auto bg-white rounded-lg shadow-sm">
+                <table class="w-full text-left">
+                    <thead class="bg-stone-100">
+                        <tr>
+                            <th class="p-3 font-semibold">Method</th>
+                            <th class="p-3 font-semibold">Syntax</th>
+                            <th class="p-3 font-semibold">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            group.methods.forEach(method => {
+                tableHtml += `<tr class="border-t">
+                                <td class="p-3 font-mono text-teal-700">${method.name}</td>
+                                <td class="p-3 font-mono text-sm">${method.syntax}</td>
+                                <td class="p-3 text-slate-600">${method.description}</td>
+                              </tr>`;
+            });
+            tableHtml += `</tbody></table></div>`;
+            container.innerHTML += tableHtml;
+        });
+    }
+    
+    function populateProblems() {
+        const container = document.getElementById('problem-container');
+        container.innerHTML = '';
+        problemData.forEach(group => {
+            let levelHtml = `<h3 class="text-2xl font-semibold mt-4 mb-2 text-slate-700">${group.level}</h3>`;
+            group.problems.forEach(problem => {
+                levelHtml += `
+                    <div class="method-card bg-white rounded-lg shadow-sm border border-stone-200">
+                        <div class="method-header cursor-pointer p-4 flex justify-between items-center">
+                            <h4 class="font-semibold text-lg text-teal-700">Problem ${problem.id}: ${problem.title}</h4>
+                            <span class="text-2xl text-slate-400 transform transition-transform">+</span>
+                        </div>
+                        <div class="method-body hidden p-4 border-t border-stone-200">
+                             <h5 class="font-semibold mb-1">Solution:</h5>
+                             <div class="relative">
+                                <pre class="code-block">${problem.solution}</pre>
+                                <button class="copy-btn absolute top-2 right-2 bg-slate-600 hover:bg-slate-500 text-white text-xs px-2 py-1 rounded">Copy</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            container.innerHTML += levelHtml;
+        });
+    }
+
+    const comparisonCode = `// Case 1: Literals (String Pool)
+String s1 = "Hello";
+String s2 = "Hello";
+System.out.println("s1 == s2: " + (s1 == s2));           // Output: true
+System.out.println("s1.equals(s2): " + s1.equals(s2)); // Output: true
+
+// Case 2: 'new' Keyword (Heap)
+String s3 = new String("Hello");
+String s4 = new String("Hello");
+System.out.println("s3 == s4: " + (s3 == s4));           // Output: false
+System.out.println("s3.equals(s4): " + s3.equals(s4)); // Output: true
+
+// Case 3: Literal vs 'new'
+System.out.println("s1 == s3: " + (s1 == s3));           // Output: false
+System.out.println("s1.equals(s3): " + s1.equals(s3)); // Output: true`;
+    document.getElementById('comparison-example').textContent = comparisonCode;
+
+    function showSection(id) {
+        sections.forEach(section => {
+            section.classList.toggle('hidden', section.id !== id);
+        });
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.hash === '#' + id);
+        });
+        mobileNav.value = id;
+        window.scrollTo(0, 0);
+    }
+
+    function handleNav(event) {
+        event.preventDefault();
+        const id = event.currentTarget.hash.substring(1);
+        showSection(id);
+        window.history.pushState(null, null, '#' + id);
+    }
+    
+    navLinks.forEach(link => link.addEventListener('click', handleNav));
+
+    mobileNav.addEventListener('change', () => {
+        showSection(mobileNav.value);
+        window.history.pushState(null, null, '#' + mobileNav.value);
+    });
+    
+    document.getElementById('method-search').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        document.querySelectorAll('.method-card-wrapper').forEach(cardWrapper => {
+            const methodName = cardWrapper.querySelector('.method-header h4').textContent.toLowerCase();
+            cardWrapper.style.display = methodName.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('content-container').addEventListener('click', function(e) {
+        const header = e.target.closest('.method-header');
+        if (header) {
+            const body = header.nextElementSibling;
+            const icon = header.querySelector('span');
+            body.classList.toggle('hidden');
+            if (body.classList.contains('hidden')) {
+                icon.textContent = '+';
+                icon.classList.remove('rotate-45');
+            } else {
+                icon.textContent = '+';
+                icon.classList.add('rotate-45');
+            }
+        }
+        
+        if (e.target.classList.contains('copy-btn')) {
+            const code = e.target.previousElementSibling.textContent;
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            document.body.appendChild(textArea);
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                e.target.textContent = 'Copied!';
+                setTimeout(() => { e.target.textContent = 'Copy'; }, 2000);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    });
+
+    // Initial population
+    populateMethods();
+    populateCheatsheet();
+    populateProblems();
+    const initialHash = window.location.hash ? window.location.hash.substring(1) : 'introduction';
+    if(document.getElementById(initialHash)) {
+       showSection(initialHash);
+    } else {
+       showSection('introduction');
+    }
+});
+</script>
+</body>
+</html>
+
